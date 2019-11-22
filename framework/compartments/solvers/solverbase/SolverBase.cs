@@ -497,11 +497,13 @@ namespace compartments.solvers.solverbase
                 JsonSupport.WriteJsonFile(trajectories, jsonOptions);
             }
 
+/*
             var matlabOptions = MatlabSupport.GetMatlabOutputOptions(prefix);
             if (matlabOptions.WriteMatFile)
             {
                 MatlabSupport.WriteMatFile(trajectories, matlabOptions);
             }
+*/
         }
 
         public virtual string[] GetTrajectoryLabels()

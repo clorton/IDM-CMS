@@ -16,7 +16,7 @@ using compartments.CommandLine;
 using compartments.emod;
 using compartments.emod.utils;
 using compartments.emod.interfaces;
-using compartments.emodl;
+// using compartments.emodl;
 
 namespace compartments
 {
@@ -118,7 +118,10 @@ namespace compartments
                     throw new NotSupportedException("CMDL support not present.");
 
                 case "EMODL":
+                    model = null;
+/*
                     model = EmodlLoader.LoadEMODLFile(modelFileName);
+*/
                     break;
 
                 case "SBML":
