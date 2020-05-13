@@ -22,8 +22,10 @@ namespace compartments
 {
     public static class Program
     {
-        internal static void Main(string[] args)
+        internal static int Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CatchAllExceptionHandler);
+
             var version = Environment.Version;
             Console.WriteLine("CMS Framework version: {0} {1}", VersionInfo.Version, VersionInfo.Description);
             Console.WriteLine("CLR Runtime Version: {0} ({1}-bit)", version, (IntPtr.Size * 8));
@@ -48,6 +50,12 @@ namespace compartments
 
                         RunModel(model, executionParameters.SolverName, executionParameters.Duration, executionParameters.Repeats, executionParameters.Samples);
                     }
+                    else
+                    {
+                        Console.WriteLine("Problem loading model '{0}'", executionParameters.ModelFileName);
+                        Console.Error.WriteLine("Problem loading model '{0}'", executionParameters.ModelFileName);
+                        Environment.ExitCode = 1;
+                    }
                 }
             }
             catch (Exception e)
@@ -65,7 +73,24 @@ namespace compartments
 
                     currentException = currentException.InnerException;
                 }
+
+                Environment.ExitCode = 1;
             }
+
+            Console.WriteLine("Execution ended, returning exit code {0}", Environment.ExitCode);
+            if (Environment.ExitCode != 0)
+            {
+                Console.Error.WriteLine("Execution ended, returning exit code {0}", Environment.ExitCode);
+            }
+            return Environment.ExitCode;
+        }
+
+        static void CatchAllExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            Console.WriteLine("Otherwise unhandled exception: {0}", ex.ToString());
+            Console.Error.WriteLine("Otherwise unhandled exception: {0}", ex.ToString());
+            Environment.ExitCode = 1;
         }
 
         public static bool ProcessArguments(string[] args, out ExecutionParameters executionParameters)
